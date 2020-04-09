@@ -136,15 +136,9 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	var funcVal, fileVal string
 
 	fixedKeys := make([]string, 0, 4+len(data))
+	fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyLevel))
 	if !f.DisableTimestamp {
 		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyTime))
-	}
-	fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyLevel))
-	if entry.Message != "" {
-		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyMsg))
-	}
-	if entry.err != "" {
-		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyLogrusError))
 	}
 	if entry.HasCaller() {
 		if f.CallerPrettyfier != nil {
@@ -176,6 +170,13 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		}
 	} else {
 		fixedKeys = append(fixedKeys, keys...)
+	}
+	
+	if entry.Message != "" {
+		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyMsg))
+	}
+	if entry.err != "" {
+		fixedKeys = append(fixedKeys, f.FieldMap.resolve(FieldKeyLogrusError))
 	}
 
 	var b *bytes.Buffer
@@ -296,7 +297,7 @@ func (f *TextFormatter) needsQuoting(text string) bool {
 		if !((ch >= 'a' && ch <= 'z') ||
 			(ch >= 'A' && ch <= 'Z') ||
 			(ch >= '0' && ch <= '9') ||
-			ch == '-' || ch == '.' || ch == '_' || ch == '/' || ch == '@' || ch == '^' || ch == '+') {
+			ch == '-' || ch == '.' || ch == '_' || ch == '/' || ch == '@' || ch == '^' || ch == '+' || ch == '[' || ch == ']') {
 			return true
 		}
 	}
