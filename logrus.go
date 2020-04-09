@@ -15,9 +15,9 @@ type Level uint32
 // Convert the Level to a string. E.g. PanicLevel becomes "panic".
 func (level Level) String() string {
 	if b, err := level.MarshalText(); err == nil {
-		return string(b)
+		return "["+string(b)+"]"
 	} else {
-		return "unknown"
+		return "[unknown]"
 	}
 }
 
